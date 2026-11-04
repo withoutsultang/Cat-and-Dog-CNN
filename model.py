@@ -86,9 +86,10 @@ class VGG16(nn.Module):
 
 # ResNet-18 모델 정의
 class ResNet18Binary(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained=True):
         super(ResNet18Binary, self).__init__()
-        self.resnet = models.resnet18(pretrained=True)  # 사전 학습된 ResNet-18 사용
+        weights = models.ResNet18_Weights.DEFAULT if pretrained else None
+        self.resnet = models.resnet18(weights=weights)
         num_ftrs = self.resnet.fc.in_features
         self.resnet.fc = nn.Sequential(
             nn.Linear(num_ftrs, 512),

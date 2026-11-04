@@ -1,7 +1,6 @@
 # trainer.py
 
 import torch
-import numpy as np
 from copy import deepcopy
 
 class Trainer:
@@ -38,30 +37,21 @@ class Trainer:
             loss.backward() # 역전파 수행
             self.optimizer.step() # 가중치 업데이트
 
-            total_loss += loss.item()
-            correct += (torch.round(y_hat) == y).sum().item() # 정확도 계산
+            total_loss += loss.item() * y.size(0)
+            correct += ((y_hat > 0.5) == y).sum().item()
             total += y.size(0)
 
-        return total_loss / len(loader), correct / total
+        return total_loss / total, correct / total
 
-  def _validate(self, loader, config):
-    self.model.eval() # 모델을 평가 모드로 설정
-    total_loss = 0
-    corr = 0
-    total = 0
-
-    with torch.no_grad():
-      for x,y in loader:
-        x, y = x.to(config.device), y.to(config.device).float().view(-1,1)
-        y_hat = self.model(x)
-        loss = self.crit(y_hat, y)
-        total_loss += loss.item()
-
-        predicted = (y_hat > 0.5).float()
-        corr = (predicted == y).sum().item()
-        total = y.size(0)
-
-      avg_loss = total_loss / len(loader)
-      accuracy = corr / total
-
-    return avg_loss, accuracy
+    @torch.no_grad()
+    def _validate(self, loader, config):
+        self.model.eval()
+        total_loss, correct, total = 0, 0, 0
+        for x, y in loader:
+            x = x.to(config.device)
+            y = y.to(config.device).float().view(-1, 1)
+            predictions = self.model(x)
+            total_loss += self.crit(predictions, y).item() * y.size(0)
+            correct += ((predictions > 0.5) == y).sum().item()
+            total += y.size(0)
+        return total_loss / total, correct / total
