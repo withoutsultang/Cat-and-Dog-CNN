@@ -6,6 +6,8 @@
 
 인하공업전문대학 전공심화 머신러닝 프로젝트 · 2024
 
+[![CNN smoke test](https://github.com/withoutsultang/Cat-and-Dog-CNN/actions/workflows/smoke.yml/badge.svg)](https://github.com/withoutsultang/Cat-and-Dog-CNN/actions/workflows/smoke.yml)
+
 ## 제가 한 일
 
 - **이미지 분류 파이프라인 구축** — 고양이·강아지 이미지를 RGB로 변환하고 224×224 리사이즈와 정규화를 적용해 학습 입력으로 구성했습니다.
@@ -29,6 +31,8 @@ python predict.py path/to/image.jpg --weights outputs/resnet18.pth
 ```
 
 포트폴리오 버전은 시드 기반 80:20 학습·검증 분할, 검증 전체 샘플 집계, 단일 이미지 추론 명령을 제공합니다.
+
+[자동 실행 검증](scripts/smoke.py)은 합성 이미지로 CPU 학습, 체크포인트 저장, 이미지 추론까지 실행합니다.
 
 | 살펴볼 코드 | 내용 |
 | --- | --- |
